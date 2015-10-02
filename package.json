@@ -12,7 +12,7 @@
     "auto-load"
   ],
   "author": "First+Third",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "hoek": "^2.16.3",
     "lodash": "^3.10.1",
