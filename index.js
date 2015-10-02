@@ -1,18 +1,14 @@
-var Hoek = require('hoek');
-var path = require('path');
 var _ = require('lodash');
 var fs = require('fs');
 
 var defaults = {
-  cwd: process.cwd(),
-  methods: 'methods'
+  path: process.cwd() + '/methods',
+  verbose: false
 };
 
 exports.register = function(server, options, next) {
-  var settings = Hoek.clone(options);
-  settings = Hoek.applyToDefaults(defaults, settings);
-
-  var methodPath = path.join(settings.cwd, settings.methods);
+  var settings = _.clone(options);
+  settings = _.defaults(settings, defaults);
 
   var addMethod = function(folder, key, value) {
     key = _.camelCase(key);
@@ -30,16 +26,19 @@ exports.register = function(server, options, next) {
       };
     }
 
+    if (settings.verbose) {
+      server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: value.options });
+    }
     server.method(key, value.method.bind(server), value.options || {});
   };
 
-  fs.stat(methodPath, function(err, stat) {
+  fs.stat(settings.path, function(err, stat) {
 
     if (err || !stat.isDirectory()) {
       return next();
     }
 
-    var methods = require('require-all')(methodPath);
+    var methods = require('require-all')(settings.path);
 
     _.forIn(methods, function(value, key) {
       //check if folder
