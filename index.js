@@ -14,7 +14,7 @@ exports.register = function(server, options, next) {
     key = _.camelCase(key);
     folder = (folder) ? _.camelCase(folder) : '';
 
-    if ((folder && typeof server.methods[folder] != 'undefined' && typeof server.methods[folder][key] != 'undefined') || typeof server.methods[key] !== 'undefined') {
+    if ((folder && typeof server.methods[folder] != 'undefined' && typeof server.methods[folder][key] != 'undefined') || (!folder && typeof server.methods[key] !== 'undefined')) {
       return;
     }
 
