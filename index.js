@@ -15,6 +15,7 @@ exports.register = function(server, options, next) {
     folder = (folder) ? _.camelCase(folder) : '';
 
     if ((folder && typeof server.methods[folder] != 'undefined' && typeof server.methods[folder][key] != 'undefined') || (!folder && typeof server.methods[key] !== 'undefined')) {
+      server.log(['hapi-method-loader', 'error'], { message: 'method already exists', folder: folder, key: key });
       return;
     }
 
