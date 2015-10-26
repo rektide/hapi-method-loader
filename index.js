@@ -7,10 +7,8 @@ var defaults = {
 };
 
 exports.register = function(server, options, next) {
-  var settings = _.clone(options);
-  settings = _.defaults(settings, defaults);
 
-  var addMethod = function(folder, key, value) {
+  var addMethod = function(folder, key, value, verbose) {
     key = _.camelCase(key);
     folder = (folder) ? _.camelCase(folder) : '';
 
@@ -27,34 +25,46 @@ exports.register = function(server, options, next) {
       };
     }
 
-    if (settings.verbose) {
+    if (verbose) {
       server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: value.options });
     }
     server.method(key, value.method.bind(server), value.options || {});
   };
 
-  fs.stat(settings.path, function(err, stat) {
+  var load = function(options, next) {
+    var settings = _.clone(options);
+    next = next || function() {};
+    settings = _.defaults(settings, defaults);
+    fs.stat(settings.path, function(err, stat) {
 
-    if (err || !stat.isDirectory()) {
-      return next();
-    }
-
-    var methods = require('require-all')(settings.path);
-
-    _.forIn(methods, function(value, key) {
-      //check if folder
-      if (typeof value == 'object' && !value.method) { //assume folder
-        _.forIn(value, function(v, k) {
-          addMethod(key, k, v);
-        });
-      } else {
-        addMethod(false, key, value);
+      if (err) {
+        return next(err);
       }
+
+      if (!stat.isDirectory()) {
+        return next();
+      }
+
+      var methods = require('require-all')(settings.path);
+
+      _.forIn(methods, function(value, key) {
+        //check if folder
+        if (typeof value == 'object' && !value.method) { //assume folder
+          _.forIn(value, function(v, k) {
+            addMethod(key, k, v, settings.verbose);
+          });
+        } else {
+          addMethod(false, key, value, settings.verbose);
+        }
+      });
+
+      next();
+
     });
+  };
 
-    next();
-
-  });
+  server.expose('load', load);
+  load(options, next);
 };
 
 exports.register.attributes = {
