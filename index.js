@@ -3,7 +3,8 @@ var fs = require('fs');
 
 var defaults = {
   path: process.cwd() + '/methods',
-  verbose: false
+  verbose: false,
+  autoLoad: true
 };
 
 exports.register = function(server, options, next) {
@@ -64,6 +65,9 @@ exports.register = function(server, options, next) {
   };
 
   server.expose('load', load);
+  if (options.autoLoad === false) {
+    return next();
+  }
   load(options, next);
 };
 
