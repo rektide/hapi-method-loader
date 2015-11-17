@@ -29,7 +29,9 @@ exports.register = function(server, options, next) {
     if (verbose) {
       server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: value.options });
     }
-    server.method(key, value.method.bind(server), value.options || {});
+    if (value.options) value.options.bind = server;
+    else value.options = {bind:server};
+    server.method(key, value.method, value.options);//
   };
 
   var load = function(options, next) {
