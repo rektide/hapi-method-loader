@@ -1,12 +1,17 @@
 var Hapi = require('hapi');
 
-var server = new Hapi.Server();
+var server = new Hapi.Server({
+  debug: {
+    log: ['error', 'hapi-method-loader']
+  }
+});
 server.connection({ port: 3000 });
 
 server.register({
   register: require('../'),
   options : {
-    prefix : 'test'
+    verbose: true,
+    prefix: 'test'
   }
 }, function (err) {
   if (err) {

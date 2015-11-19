@@ -68,7 +68,6 @@ exports.register = function(server, options, next) {
         });
       }
       _.forIn(methods, function(module, moduleName) {
-        console.log("module is %s", moduleName);
         if (isFolder(module))
           addFolder(module, moduleName);
         else
