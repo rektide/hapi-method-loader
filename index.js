@@ -41,10 +41,12 @@ exports.register = function(server, options, next) {
     fs.stat(settings.path, function(err, stat) {
 
       if (err) {
-        return next(err);
+        server.log(['hapi-method-loader', 'warning'], { message: err.message });
+        return next();
       }
 
       if (!stat.isDirectory()) {
+        server.log(['hapi-method-loader', 'warning'], { path: settings.path, message: 'Not a directory' });
         return next();
       }
 
