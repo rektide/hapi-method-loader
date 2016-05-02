@@ -1,4 +1,12 @@
 
+0.1.0 / 2016-05-02
+==================
+
+  * log warning if directory doesn't exist instead of error
+  * removed console log, enabled verbose output for example
+  * added support for method prefix
+  * uses hapi server 'bind' option to bind methods to server
+
 0.0.5 / 2015-11-11
 ==================
 
