@@ -1,83 +1,75 @@
-var _ = require('lodash');
-var fs = require('fs');
-
-var defaults = {
-  path: process.cwd() + '/methods',
+'use strict';
+const _ = require('lodash');
+const fs = require('fs');
+const defaults = {
+  path: `${process.cwd()}/methods`,
   verbose: false,
   autoLoad: true
 };
-
-exports.register = function(server, options, next) {
-
-  var addMethod = function(folder, key, value, verbose) {
+exports.register = (server, options, next) => {
+  const addMethod = (folder, key, value, verbose) => {
     key = _.camelCase(key);
     folder = (folder) ? _.camelCase(folder) : '';
-
-    if ((folder && typeof server.methods[folder] != 'undefined' && typeof server.methods[folder][key] != 'undefined') || (!folder && typeof server.methods[key] !== 'undefined')) {
-      server.log(['hapi-method-loader', 'error'], { message: 'method already exists', folder: folder, key: key });
+    if ((folder && typeof server.methods[folder] !== 'undefined' && typeof server.methods[folder][key] !== 'undefined') || (!folder && typeof server.methods[key] !== 'undefined')) {
+      server.log(['hapi-method-loader', 'error'], { message: 'method already exists', folder, key });
       return;
     }
+    key = (folder) ? `${folder}.${key}` : key;
 
-    key = (folder) ? folder+'.'+key : key;
-
-    if (typeof value == 'function') {
+    if (typeof value === 'function') {
       value = {
         method: value
       };
     }
-
     if (verbose) {
       server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: value.options });
     }
     if (value.options) value.options.bind = server;
-    else value.options = {bind:server};
+    else value.options = { bind: server };
     server.method(key, value.method, value.options);//
   };
 
-  var load = function(options, next) {
-    var settings = _.clone(options);
-    next = next || function() {};
+  const load = (passedOptions, loadDone) => {
+    let settings = _.clone(passedOptions);
+    loadDone = loadDone || (() => {});
     settings = _.defaults(settings, defaults);
-    fs.stat(settings.path, function(err, stat) {
-
+    fs.stat(settings.path, (err, stat) => {
       if (err) {
         server.log(['hapi-method-loader', 'warning'], { message: err.message });
-        return next();
+        return loadDone();
       }
-
       if (!stat.isDirectory()) {
         server.log(['hapi-method-loader', 'warning'], { path: settings.path, message: 'Not a directory' });
-        return next();
+        return loadDone();
       }
-
-      var methods = require('require-all')(settings.path);
-
-      var isFolder = function(module){
-        return (typeof module == 'object' && !module.method);
-      }
-      var addFile = function(file, fileName){
-        if (options.prefix)
+      const methods = require('require-all')(settings.path);
+      const isFolder = (module) => {
+        return (typeof module === 'object' && !module.method);
+      };
+      const addFile = (file, fileName) => {
+        if (options.prefix) {
           addMethod(options.prefix, fileName, file, settings.verbose);
-        else
+        } else {
           addMethod(false, fileName, file, settings.verbose);
-      }
-      var addFolder = function(folder, folderName){
-        _.forIn(folder, function(module, methodName) {
-          if (options.prefix)
+        }
+      };
+      const addFolder = (folder, folderName) => {
+        _.forIn(folder, (module, methodName) => {
+          if (options.prefix) {
             addMethod(options.prefix, methodName, module, settings.verbose);
-          else
+          } else {
             addMethod(folderName, methodName, module, settings.verbose);
+          }
         });
-      }
-      _.forIn(methods, function(module, moduleName) {
-        if (isFolder(module))
+      };
+      _.forIn(methods, (module, moduleName) => {
+        if (isFolder(module)) {
           addFolder(module, moduleName);
-        else
-          addFile(module,moduleName);
+        } else {
+          addFile(module, moduleName);
+        }
       });
-
-      next();
-
+      loadDone();
     });
   };
 
