@@ -7,6 +7,15 @@ const defaults = {
   autoLoad: true
 };
 exports.register = (server, options, next) => {
+  exports.methodLoader(server, options, next, true);
+};
+exports.register.attributes = {
+  pkg: require('./package.json')
+};
+exports.methodLoader = function(server, options, next, useAsPlugin) {
+  let settings = _.clone(options);
+  settings = _.defaults(settings, defaults);
+
   const addMethod = (folder, key, value, verbose) => {
     key = _.camelCase(key);
     folder = (folder) ? _.camelCase(folder) : '';
@@ -15,7 +24,6 @@ exports.register = (server, options, next) => {
       return;
     }
     key = (folder) ? `${folder}.${key}` : key;
-
     if (typeof value === 'function') {
       value = {
         method: value
@@ -30,7 +38,6 @@ exports.register = (server, options, next) => {
   };
 
   const load = (passedOptions, loadDone) => {
-    let settings = _.clone(passedOptions);
     loadDone = loadDone || (() => {});
     settings = _.defaults(settings, defaults);
     fs.stat(settings.path, (err, stat) => {
@@ -72,14 +79,11 @@ exports.register = (server, options, next) => {
       loadDone();
     });
   };
-
-  server.expose('load', load);
+  if (useAsPlugin) {
+    server.expose('load', load);
+  }
   if (options.autoLoad === false) {
     return next();
   }
   load(options, next);
-};
-
-exports.register.attributes = {
-  pkg: require('./package.json')
 };
