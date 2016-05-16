@@ -1,5 +1,5 @@
 module.exports = {
-  method: function(a,b) {
-    return a+b;
+  method: (a, b) => {
+    return a + b;
   }
 };

@@ -33,7 +33,9 @@ lab.experiment('hapi-method-loader', () => {
 
   lab.test(' loads as a plugin, auto-adds a method from a methods directory and lets you call it', (done) => {
     server.start((err) => {
-      if (err) console.log(err);
+      if (err) {
+        console.log(err);
+      }
       server.methods.test.doSomething((someEerr, result) => {
         Code.expect(typeof result).to.equal('string');
         Code.expect(result).to.equal('something');
@@ -46,7 +48,9 @@ lab.experiment('hapi-method-loader', () => {
 
   lab.test('loads as a plugin, lets you call a method added to a prefixed namespace correctly', (done) => {
     server.start((err) => {
-      if (err) console.log(err);
+      if (err) {
+        console.log(err);
+      }
       const result = server.methods.test.add(1, 1);
       Code.expect(typeof result).to.equal('number');
       Code.expect(result).to.equal(2);
