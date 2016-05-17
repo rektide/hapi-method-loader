@@ -4,6 +4,7 @@
   "description": "Automatically loads hapi methods",
   "main": "index.js",
   "scripts": {
+    "test": "lab -t 100 ",
     "lint": "eslint **/*.js"
   },
   "keywords": [
@@ -22,7 +23,7 @@
     "hapi": "^10.1.0",
     "eslint": "^2.2.0",
     "eslint-config-airbnb": "^6.0.2",
-    "eslint-config-firstandthird": "^1.1.0",
+    "eslint-config-firstandthird": "^2.0.0",
     "eslint-plugin-react": "^4.1.0",
     "lab": "^8.0.2"
   }
