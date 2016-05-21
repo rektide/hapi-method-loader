@@ -1,4 +1,13 @@
 
+0.2.0 / 2016-05-21
+==================
+
+  * removed npm-debug.log
+  * updated to use eslint-config-firstandthird 2.0.0
+  * fixed minor lint things in testing methods
+  * allows and tests use as module or hapi plugin
+  * es6 and linted
+
 0.1.0 / 2016-05-02
 ==================
 
