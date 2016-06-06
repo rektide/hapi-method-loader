@@ -1,4 +1,4 @@
-## hapi-method-loader
+## hapi-method-loader   [![Build Status](https://travis-ci.org/firstandthird/hapi-method-loader.svg?branch=master)](https://travis-ci.org/firstandthird/hapi-method-loader)
 
 Automatically loads methods from a directory.
 
