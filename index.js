@@ -71,18 +71,17 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
           key = relativePathSegments.join('.');
           key = settings.prefix ? `${settings.prefix}.${key}` : key;
         }
-        // make sure a method with that name doesn't already exist:
-        if (_.get(server.methods, key)) {
-          server.log(['hapi-method-loader', 'error'], { message: 'method already exists', key });
-          return loadDone(`Attemped to add duplicate method ${key}`);
-        }
-        // get the executable:
-        const method = loadMethodFromFile(file);
-        if (settings.verbose) {
-          server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: method.options });
-        }
         // finally, add the function to the server:
-        server.method(key, method.method, method.options);
+        if (!_.get(server.methods, key)) {
+          // load the executable:
+          const method = loadMethodFromFile(file);
+          if (settings.verbose) {
+            server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: method.options });
+          }
+          server.method(key, method.method, method.options);
+        } else {
+          server.log(['hapi-method-loader', 'error'], { message: 'method already exists', key });
+        }
       }
       return loadDone();
     });

@@ -53,7 +53,7 @@ lab.experiment('hapi-method-loader', () => {
     },
     (err) => {
       server.start(() => {
-        Code.expect(err).to.not.equal(null);
+        Code.expect(err).to.not.equal(undefined);
         Code.expect(err.path).to.include(`hapi-method-loader${path.sep}methods`);
         done();
       });
@@ -110,18 +110,26 @@ lab.experiment('hapi-method-loader', () => {
       path: 'a nonexistent path'
     },
     (err) => {
-      Code.expect(err).to.not.equal(null);
+      Code.expect(err).to.not.equal(undefined);
       done();
     });
   });
   lab.test('warns if a duplicate method is added', (done) => {
-    server.method('doSomething', () => {});
+    let warningGiven = false;
+    server.method('add', () => {
+      Code.expect(warningGiven).to.equal(true);
+      return done();
+    });
+    server.on('log', (evt) => {
+      if (evt.data.message === 'method already exists') {
+        warningGiven = true;
+      }
+    });
     methodLoader(server, {
       verbose: true,
       path: `${__dirname}${path.sep}methods`,
-    }, (err) => {
-      Code.expect(err).to.not.equal(null);
-      return done();
+    }, () => {
+      server.methods.add();
     });
   });
   lab.test('will load a relative path', (done) => {
