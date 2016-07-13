@@ -4,7 +4,7 @@
   "description": "Automatically loads hapi methods",
   "main": "index.js",
   "scripts": {
-    "test": "lab -t",
+    "test": "lab -t 90",
     "lint": "eslint **/*.js"
   },
   "keywords": [
