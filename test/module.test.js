@@ -86,25 +86,6 @@ lab.experiment('hapi-method-loader', () => {
       });
     });
   });
-  lab.test('handles paths that are passed using the wrong delimiter', (done) => {
-    let sep = '/';
-    if (path.sep === '/') {
-      sep = '\\';
-    }
-    methodLoader(server, {
-      verbose: true,
-      path: `${__dirname}${sep}methods`,
-    },
-    () => {
-      server.start(() => {
-        server.methods.doSomething((err, result) => {
-          Code.expect(typeof result).to.equal('string');
-          Code.expect(result).to.equal('something');
-          done();
-        });
-      });
-    });
-  });
   lab.test('returns an error if the directory does not exist', (done) => {
     methodLoader(server, {
       path: 'a nonexistent path'
