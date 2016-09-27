@@ -33,8 +33,6 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
   };
 
   const load = (passedOptions, loadDone) => {
-    // get default settings and normalize the methods path:
-    // let settings = passedOptions ? _.clone(_.defaults(defaults, passedOptions)) : _.clone(_.defaults(defaults, options));
     const settings = _.defaults(passedOptions, defaults);
     settings.path = path.normalize(path.resolve(settings.path));
     // make sure the path exists and is loadable:
@@ -54,7 +52,9 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
       for (let i = 0; i < hash.length; i++) {
         const file = hash[i];
         // get an array containing the elements of the module:
-        const relativePathSegments = _.difference(file.split(path.sep), settings.path.split(path.sep));
+        // const relativePathSegments = _.difference(file.split(path.sep), settings.path.split(path.sep));
+        const allPathComponents = file.split(path.sep);
+        const relativePathSegments = allPathComponents.slice(settings.path.split(path.sep).length, allPathComponents.length);
         let key;
         // if it's in the root methods folder:
         if (relativePathSegments.length === 1) {
