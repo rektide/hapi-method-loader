@@ -1,4 +1,17 @@
 
+1.0.0 / 2016-12-13
+==================
+
+  * update
+  * set test threshold to 90%
+  * removed bad delimiter test
+  * fixed duplicate handling / testing
+  * handles recursive
+  * updated eslint packages
+  * removed node 6 test, removed threhold check in lab for travisci
+  * travisci badge added to readme, covers node versions 4,5,6
+  * travisci
+
 0.2.0 / 2016-05-21
 ==================
 
