@@ -126,4 +126,16 @@ lab.experiment('hapi-method-loader', () => {
       });
     });
   });
+  lab.test('binds server', (done) => {
+    methodLoader(server, {
+      path: './test/methods'
+    },
+    () => {
+      server.start(() => {
+        const result = server.methods.server();
+        Code.expect(typeof result.plugins).to.equal('object');
+        done();
+      });
+    });
+  });
 });
