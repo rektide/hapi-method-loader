@@ -18,7 +18,7 @@ lab.experiment('hapi-method-loader', () => {
       done();
     });
   });
-  lab.test('loads as a module, auto-adds a method from a methods directory and lets you call it', (done) => {
+  lab.test('loads as a module, auto-adds a method from a methods directory and lets you call it', { timeout: 5000 }, (done) => {
     methodLoader(server, {
       verbose: true,
       path: `${__dirname}${path.sep}methods`,
@@ -33,7 +33,7 @@ lab.experiment('hapi-method-loader', () => {
       });
     });
   });
-  lab.test('loads as a module, lets you call a method added to a prefixed namespace correctly', (done) => {
+  lab.test('loads as a module, lets you call a method added to a prefixed namespace correctly', { timeout: 5000 }, (done) => {
     methodLoader(server, {
       path: `${__dirname}${path.sep}methods`,
       prefix: 'test'
@@ -47,7 +47,7 @@ lab.experiment('hapi-method-loader', () => {
       });
     });
   });
-  lab.test('will try to load the "methods" folder by default', (done) => {
+  lab.test('will try to load the "methods" folder by default', { timeout: 5000 }, (done) => {
     methodLoader(server, {
       verbose: true
     },
@@ -59,7 +59,7 @@ lab.experiment('hapi-method-loader', () => {
       });
     });
   });
-  lab.test('loads recursive modules', (done) => {
+  lab.test('loads recursive modules', { timeout: 5000 }, (done) => {
     methodLoader(server, {
       path: `${__dirname}${path.sep}recursiveMethods`,
     },
