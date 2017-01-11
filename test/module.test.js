@@ -132,9 +132,11 @@ lab.experiment('hapi-method-loader', () => {
     },
     () => {
       server.start(() => {
-        const result = server.methods.server();
-        Code.expect(typeof result.plugins).to.equal('object');
-        done();
+        const result = server.methods.server((err, boundServer) => {
+          Code.expect(err).to.equal(null);
+          Code.expect(typeof boundServer.plugins).to.equal('object');
+          done();
+        });
       });
     });
   });
