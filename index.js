@@ -24,6 +24,11 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
         method: value
       };
     }
+    if (value.options && typeof value.options.cache === 'function') {
+      value.options = value.options || {};
+      value.options.cache = value.options.cache(server, options);
+    }
+
     if (value.options) {
       value.options.bind = server.root;
     } else {
@@ -78,13 +83,7 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
           if (settings.verbose) {
             server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: Object.keys(method.options) });
           }
-          if (typeof method.options.cache === 'function') {
-            console.log('has cache')
-            // method.options.cache = options.cache(server, options);
-            // console.log(typeof method.options.cache)
-          }
-          // console.log('---------------------------------------------')
-          // console.log(Object.keys(method.options))
+          console.log(method.options.cache)
           server.method(key, method.method, method.options);
         } else {
           server.log(['hapi-method-loader', 'error'], { message: 'method already exists', key });

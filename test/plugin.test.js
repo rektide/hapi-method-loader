@@ -59,13 +59,21 @@ lab.experiment('hapi-method-loader cache', { timeout: 5000 }, () => {
     server = new Hapi.Server({
       debug: {
         log: ['error', 'hapi-method-loader']
-      }
+      },
+      cache: [
+        {
+          name: 'mongoCache',
+          engine: require('catbox-mongodb'),
+          host: '127.0.0.1',
+          partition: 'cache'
+        }
+      ]
     });
     server.connection({ port: 3000 });
     server.register({
       register: methodLoader,
       options: {
-        path: path.join(__dirname, 'methods')
+        path: path.join(__dirname, 'cache')
       },
     }, (err) => {
       if (err) {
@@ -74,12 +82,12 @@ lab.experiment('hapi-method-loader cache', { timeout: 5000 }, () => {
       done();
     });
   });
-  lab.test('supports cacheing', (done) => {
+  lab.test('supports caching option from a method call', (done) => {
     server.start(() => {
-      server.methods.cacheIt((result1) => {
-        server.methods.cacheIt((result2) => {
+      server.methods.cacheIt(1, (result1) => {
+        server.methods.cacheIt(1, (result2) => {
           setTimeout(() => {
-            server.methods.cacheIt((result3) => {
+            server.methods.cacheIt(1, (result3) => {
               Code.expect(result1).to.equal(result2);
               Code.expect(result2).to.not.equal(result3);
               done();
