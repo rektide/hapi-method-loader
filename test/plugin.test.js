@@ -53,7 +53,7 @@ lab.experiment('hapi-method-loader', () => {
   });
 });
 
-lab.experiment('hapi-method-loader cache', () => {
+lab.experiment('hapi-method-loader cache', { timeout: 5000 }, () => {
   let server;
   lab.before((done) => {
     server = new Hapi.Server({
@@ -65,14 +65,7 @@ lab.experiment('hapi-method-loader cache', () => {
     server.register({
       register: methodLoader,
       options: {
-        path: path.join(__dirname, 'methods'),
-        cache: (server, pluginOptions) => {
-          Code.expect(server).to.equal(server);
-          return {
-            expiresIn: 2 * 1000,
-            generateTimeout: 100
-          };
-        }
+        path: path.join(__dirname, 'methods')
       },
     }, (err) => {
       if (err) {
@@ -83,13 +76,16 @@ lab.experiment('hapi-method-loader cache', () => {
   });
   lab.test('supports cacheing', (done) => {
     server.start(() => {
-      const result1 = server.methods.cacheIt();
-      const result2 = server.methods.cacheIt();
-      setTimeout(() => {
-        const result3 = server.methods.cacheIt();
-        Code.expect(result1).to.equal(result2);
-        Code.expect(result2).to.not.equal(result3);
-        done();
+      server.methods.cacheIt((result1) => {
+        server.methods.cacheIt((result2) => {
+          setTimeout(() => {
+            server.methods.cacheIt((result3) => {
+              Code.expect(result1).to.equal(result2);
+              Code.expect(result2).to.not.equal(result3);
+              done();
+            });
+          }, 3000);
+        });
       });
     });
   });

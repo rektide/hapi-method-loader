@@ -76,11 +76,15 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
           // load the executable:
           const method = loadMethodFromFile(file);
           if (settings.verbose) {
-            server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: method.options });
+            server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: Object.keys(method.options) });
           }
-          if (settings.cache) {
-            method.options.cache = settings.cache(server, settings);
+          if (typeof method.options.cache === 'function') {
+            console.log('has cache')
+            // method.options.cache = options.cache(server, options);
+            // console.log(typeof method.options.cache)
           }
+          // console.log('---------------------------------------------')
+          // console.log(Object.keys(method.options))
           server.method(key, method.method, method.options);
         } else {
           server.log(['hapi-method-loader', 'error'], { message: 'method already exists', key });
