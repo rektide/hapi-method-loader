@@ -145,7 +145,6 @@ lab.experiment('hapi-method-loader', () => {
     });
   });
   lab.test('will warn of an invalid method', (done) => {
-    const oldLog = console.log;
     const results = [];
     server.log = (tags, data) => {
       results.push(tags);
