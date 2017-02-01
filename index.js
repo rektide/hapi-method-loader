@@ -76,7 +76,7 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
           // load the executable:
           const method = loadMethodFromFile(file);
           if (settings.verbose) {
-            server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: method.options });
+            server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key });
           }
           server.method(key, method.method, method.options);
         } else {
