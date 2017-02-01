@@ -75,6 +75,12 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
         if (!_.get(server.methods, key)) {
           // load the executable:
           const method = loadMethodFromFile(file);
+          // validate fields:
+          Object.keys(method).forEach((propName) => {
+            if (['options', 'method'].indexOf(propName) < 0) {
+              server.log(['hapi-method-loader', 'error'], `Method imported from ${file} has invalid property "${propName}" `);
+            }
+          });
           if (settings.verbose) {
             server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key, options: method.options });
           }

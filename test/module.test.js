@@ -9,7 +9,11 @@ const path = require('path');
 lab.experiment('hapi-method-loader', () => {
   let server;
   lab.beforeEach((done) => {
-    server = new Hapi.Server();
+    server = new Hapi.Server({
+      debug: {
+        log: ['error', 'hapi-method-loader']
+      }
+    });
     server.connection();
     done();
   });
@@ -138,6 +142,22 @@ lab.experiment('hapi-method-loader', () => {
           done();
         });
       });
+    });
+  });
+  lab.test('will warn of an invalid method', (done) => {
+    const oldLog = console.log;
+    const results = [];
+    server.log = (tags, data) => {
+      results.push(tags);
+      results.push(data);
+    };
+    methodLoader(server, {
+      path: './test/invalid'
+    },
+    () => {
+      Code.expect(results.length).to.equal(2);
+      Code.expect(results[1]).to.include('add.js has invalid property "cache"');
+      done();
     });
   });
 });
