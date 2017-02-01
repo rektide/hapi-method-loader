@@ -52,3 +52,45 @@ lab.experiment('hapi-method-loader', () => {
     });
   });
 });
+
+lab.experiment('hapi-method-loader cache', () => {
+  let server;
+  lab.before((done) => {
+    server = new Hapi.Server({
+      debug: {
+        log: ['error', 'hapi-method-loader']
+      }
+    });
+    server.connection({ port: 3000 });
+    server.register({
+      register: methodLoader,
+      options: {
+        path: path.join(__dirname, 'methods'),
+        cache: (server, pluginOptions) => {
+          Code.expect(server).to.equal(server);
+          return {
+            expiresIn: 2 * 1000,
+            generateTimeout: 100
+          };
+        }
+      },
+    }, (err) => {
+      if (err) {
+        throw err;
+      }
+      done();
+    });
+  });
+  lab.test('supports cacheing', (done) => {
+    server.start(() => {
+      const result1 = server.methods.cacheIt();
+      const result2 = server.methods.cacheIt();
+      setTimeout(() => {
+        const result3 = server.methods.cacheIt();
+        Code.expect(result1).to.equal(result2);
+        Code.expect(result2).to.not.equal(result3);
+        done();
+      });
+    });
+  });
+});
