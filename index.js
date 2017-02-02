@@ -24,6 +24,11 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
         method: value
       };
     }
+    if (value.options && typeof value.options.cache === 'function') {
+      value.options = value.options || {};
+      value.options.cache = value.options.cache(server, options);
+    }
+
     if (value.options) {
       value.options.bind = server.root;
     } else {
