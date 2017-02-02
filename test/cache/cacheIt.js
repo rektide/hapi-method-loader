@@ -1,15 +1,13 @@
 
 module.exports = {
-  method(val1, callback) {
-    const val2 = val1;
-    return callback(new Date());
+  method(next) {
+    return next(null, new Date().toString());
   },
   options: {
     cache: (server, pluginOptions) => {
       return {
-        name: 'mongoCache',
-        cache: 'cache2',
-        generateTimeout: 2000
+        expiresIn: 1000,
+        generateTimeout: 500
       };
     }
   }

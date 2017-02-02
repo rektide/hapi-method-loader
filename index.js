@@ -89,7 +89,6 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
           if (settings.verbose) {
             server.log(['hapi-method-loader', 'debug'], { message: 'method loaded', name: key });
           }
-          console.log(method.options.cache)
           server.method(key, method.method, method.options);
         } else {
           server.log(['hapi-method-loader', 'error'], { message: 'method already exists', key });
