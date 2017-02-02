@@ -1,4 +1,13 @@
 
+1.2.0 / 2017-02-02
+==================
+
+  * cached function
+  * remove logging of options method
+  * validate method property names
+  * fixed server binding
+  * chore(package): update dependencies
+
 1.0.0 / 2016-12-13
 ==================
 
