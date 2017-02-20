@@ -57,8 +57,7 @@ lab.experiment('hapi-method-loader', () => {
     },
     (err) => {
       server.start(() => {
-        Code.expect(err).to.not.equal(undefined);
-        Code.expect(err.path).to.include(`hapi-method-loader${path.sep}methods`);
+        Code.expect(err).to.equal(undefined);
         done();
       });
     });

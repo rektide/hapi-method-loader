@@ -42,6 +42,11 @@ exports.methodLoader = function(server, options, next, useAsPlugin) {
     settings.path = path.normalize(path.resolve(settings.path));
     // make sure the path exists and is loadable:
     try {
+      const exists = fs.existsSync(settings.path);
+      if (!exists) {
+        server.log(['hapi-method-loader', 'warning'], { path: settings.path, message: 'Directory does not exist' });
+        return loadDone();
+      }
       const stat = fs.statSync(settings.path);
       if (!stat || !stat.isDirectory) {
         server.log(['hapi-method-loader', 'warning'], { path: settings.path, message: 'Not a directory' });
