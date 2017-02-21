@@ -7,6 +7,28 @@ const methodLoader = require('../');
 const path = require('path');
 
 lab.experiment('hapi-method-loader', () => {
+  lab.test('will not crash if path does not exist', (done) => {
+    const server = new Hapi.Server({
+      debug: {
+        log: ['error', 'hapi-method-loader']
+      }
+    });
+    server.connection({ port: 3000 });
+    server.register({
+      register: methodLoader,
+      options: {
+        verbose: true,
+        path: 'no/no/no/no/no/no/no/no/',
+        prefix: 'test'
+      },
+    }, (err) => {
+      Code.expect(err).to.equal(undefined);
+      return done();
+    });
+  });
+});
+
+lab.experiment('hapi-method-loader', () => {
   let server;
   lab.before((done) => {
     server = new Hapi.Server({
